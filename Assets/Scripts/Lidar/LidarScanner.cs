@@ -8,9 +8,12 @@ public class LidarScanner : MonoBehaviour
     [SerializeField] private VisualEffect vfxGraph;
     [SerializeField] private int raysPerFrame = 500;
     [SerializeField] private float maxDistance = 50f;
+    [SerializeField] private VoicePixelsController voiceContoller;
 
     [SerializeField] private Vector3[] positions;
-    
+
+    public float pixelIntensity = 300f;
+    public float soundThreshold = 0.02f;
     private const int MaxPoints = 131072;
 
     private GraphicsBuffer _positionBuffer;
@@ -28,14 +31,29 @@ public class LidarScanner : MonoBehaviour
 
     void Update()
     {
+        int rayCount;
+
+        float loudness = voiceContoller.GetLoudnessFromMicrophone();
+
+        if (loudness > soundThreshold)
+        {
+            rayCount = Mathf.RoundToInt(loudness * pixelIntensity);
+            if (rayCount > raysPerFrame)
+                rayCount = raysPerFrame;
+        }
+
+        else
+        {
+            rayCount = 0;
+        }
         var pointsAdded = false;
 
         var originPos = transform.position;
         var myTransform = transform; 
         
-        for (var i = 0; i < raysPerFrame; i++)
+        for (var i = 0; i < rayCount; i++)
         {
-            var randomDir = Random.insideUnitSphere;
+            var randomDir = Random.onUnitSphere;
             var rayDirection = myTransform.TransformDirection(randomDir).normalized;
 
             var ray = _rayCache[i];
@@ -50,10 +68,10 @@ public class LidarScanner : MonoBehaviour
             _bufferIndex = (_bufferIndex + 1) % MaxPoints;
             pointsAdded = true;
         }
-
+        
         if (!pointsAdded)
             return;
-        
+        else 
         _positionBuffer.SetData(positions);
     }
 
