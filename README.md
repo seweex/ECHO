@@ -1,5 +1,5 @@
-![logo](images\decibels_logo.png)
-# :question: About
+![logo](images/decibels_logo.png)
+# :question:About
 + What if the only light in the world was your voice?
 
 You are a character dissolving into pixels. You can't see anything, but every sound you make reveals the outlines of the world around you. Shout to light up the path, whisper to stay hidden.
